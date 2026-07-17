@@ -54,10 +54,77 @@ export default function SeoReport({ result }) {
       />
 
       <ReportItem
+        icon="H2"
+        label="H2 Headings"
+        status={result.h2Count > 0 ? "✅ Found" : "❌ Missing"}
+        value={result.h2Count}
+      />
+
+      <ReportItem
+        icon="H3"
+        label="H3 Headings"
+        status={result.h3Count > 0 ? "✅ Found" : "❌ Missing"}
+        value={result.h3Count}
+      />
+
+      <ReportItem
+        icon="🖼️"
+        label="Images"
+        status={result.imageCount > 0 ? "✅ Found" : "❌ None"}
+        value={result.imageCount}
+      />
+
+      <ReportItem
+        icon="⚠️"
+        label="Missing ALT"
+        status={result.missingAlt === 0 ? "✅ Good" : "⚠️ Needs Fix"}
+        value={result.missingAlt}
+      />
+
+      <ReportItem
+        icon="🔗"
+        label="Internal Links"
+        status="✅"
+        value={result.internalLinks}
+      />
+
+      <ReportItem
+        icon="🌍"
+        label="External Links"
+        status="✅"
+        value={result.externalLinks}
+      />
+
+      <ReportItem
+        icon="📚"
+        label="Word Count"
+        status={result.contentQuality}
+        value={result.wordCount}
+      />
+
+      <ReportItem
+        icon="🏷️"
+        label="Schema"
+        status={result.schemaStatus}
+        value={
+          result.schemaTypes?.length
+            ? result.schemaTypes.join(", ")
+            : "None"
+        }
+      />
+
+      <ReportItem
         icon="🔗"
         label="Canonical URL"
         status={result.canonicalStatus}
         value={result.canonical}
+      />
+
+      <ReportItem
+        icon="🤖"
+        label="Meta Robots"
+        status={result.metaRobotsStatus}
+        value={result.metaRobots}
       />
 
       <ReportItem
@@ -108,6 +175,44 @@ export default function SeoReport({ result }) {
         status={result.ogStatus}
         value={result.ogUrl}
       />
+
+      {result.aiSuggestions?.length > 0 && (
+        <>
+          <h2
+            style={{
+              color: "#60a5fa",
+              marginTop: "30px",
+            }}
+          >
+            AI Suggestions
+          </h2>
+
+          {result.aiSuggestions.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                background: "#0f172a",
+                padding: "15px",
+                borderRadius: "8px",
+                marginBottom: "10px",
+              }}
+            >
+              <strong>{item.priority}</strong>
+
+              <div>{item.issue}</div>
+
+              <div
+                style={{
+                  color: "#94a3b8",
+                  marginTop: "6px",
+                }}
+              >
+                {item.recommendation}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

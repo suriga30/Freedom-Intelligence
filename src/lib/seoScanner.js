@@ -6,7 +6,6 @@ export async function scanWebsite(url) {
   // ==========================
 
   const response = await fetch(url);
-
   const html = await response.text();
 
   const $ = cheerio.load(html);
@@ -24,6 +23,17 @@ export async function scanWebsite(url) {
 
   const canonical =
     $('link[rel="canonical"]').attr("href") || "";
+
+  // ==========================
+  // META ROBOTS
+  // ==========================
+
+  const metaRobots =
+    $('meta[name="robots"]').attr("content") || "";
+
+  const metaRobotsStatus = metaRobots
+    ? "✅ Present"
+    : "❌ Missing";
 
   // ==========================
   // FAVICON
@@ -62,7 +72,7 @@ export async function scanWebsite(url) {
     : "❌ Not Secure (HTTP)";
 
   // ==========================
-  // ROBOTS
+  // ROBOTS.TXT
   // ==========================
 
   let robotsUrl = "";
@@ -80,7 +90,7 @@ export async function scanWebsite(url) {
   } catch {}
 
   // ==========================
-  // SITEMAP
+  // SITEMAP.XML
   // ==========================
 
   let sitemapUrl = "";
@@ -98,6 +108,27 @@ export async function scanWebsite(url) {
   } catch {}
 
   // ==========================
+  // OPEN GRAPH
+  // ==========================
+
+  const ogTitle =
+    $('meta[property="og:title"]').attr("content") || "";
+
+  const ogDescription =
+    $('meta[property="og:description"]').attr("content") || "";
+
+  const ogImage =
+    $('meta[property="og:image"]').attr("content") || "";
+
+  const ogUrl =
+    $('meta[property="og:url"]').attr("content") || "";
+
+  const ogStatus =
+    ogTitle || ogDescription || ogImage || ogUrl
+      ? "✅ Present"
+      : "❌ Missing";
+
+  // ==========================
   // SCORE
   // ==========================
 
@@ -110,6 +141,10 @@ export async function scanWebsite(url) {
   if (robotsStatus === "✅ Found") seoScore += 15;
   if (sitemapStatus === "✅ Found") seoScore += 15;
   if (faviconStatus === "✅ Found") seoScore += 10;
+
+  // ==========================
+  // RETURN
+  // ==========================
 
   return {
     website: url,
@@ -138,6 +173,9 @@ export async function scanWebsite(url) {
       ? "✅ Present"
       : "❌ Missing",
 
+    metaRobots,
+    metaRobotsStatus,
+
     robotsUrl,
     robotsStatus,
 
@@ -146,5 +184,11 @@ export async function scanWebsite(url) {
 
     favicon,
     faviconStatus,
+
+    ogTitle,
+    ogDescription,
+    ogImage,
+    ogUrl,
+    ogStatus,
   };
 }
