@@ -2,6 +2,13 @@
 "use client";
 
 import { useEffect } from "react";
+import type { MouseEvent } from "react";
+
+import {
+  Download,
+  FileText,
+} from "lucide-react";
+
 import { AnalysisResult } from "@/types/analysis";
 
 import Dashboard from "./dashboard/Dashboard";
@@ -139,7 +146,7 @@ export default function AnalysisReport({ data }: Props) {
   ];
 
   function navigateToSection(
-    event: React.MouseEvent<HTMLAnchorElement>,
+    event: MouseEvent<HTMLAnchorElement>,
     id: string
   ) {
     event.preventDefault();
@@ -151,6 +158,7 @@ export default function AnalysisReport({ data }: Props) {
     }
 
     const headerOffset = 120;
+
     const targetPosition =
       target.getBoundingClientRect().top +
       window.scrollY -
@@ -162,11 +170,10 @@ export default function AnalysisReport({ data }: Props) {
       top: Math.max(0, targetPosition),
       behavior: "smooth",
     });
+  }
 
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  function exportPdfReport() {
+    window.print();
   }
 
   useEffect(() => {
@@ -192,9 +199,37 @@ export default function AnalysisReport({ data }: Props) {
 
   return (
     <section className="mt-10 space-y-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
+        <div className="flex items-center gap-3">
+          <FileText
+            size={22}
+            className="text-slate-700"
+          />
+
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">
+              Website Intelligence Report
+            </h2>
+
+            <p className="text-sm text-slate-500">
+              Review, navigate, and export your website analysis.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={exportPdfReport}
+          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <Download size={18} />
+          Export PDF Report
+        </button>
+      </div>
+
       <Dashboard data={data} />
 
-      <nav className="sticky top-4 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur">
+      <nav className="sticky top-4 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur print:hidden">
         <div className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
           Report Navigation
         </div>
