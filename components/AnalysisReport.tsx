@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect } from "react";
 import { AnalysisResult } from "@/types/analysis";
 
 import Dashboard from "./dashboard/Dashboard";
@@ -23,52 +24,24 @@ type Props = {
 type NavigationItem = {
   id: string;
   label: string;
-  status:
-    | "excellent"
-    | "good"
-    | "warning"
-    | "critical";
+  status: "excellent" | "good" | "warning" | "critical";
 };
 
-function getStatus(
-  score: number
-): NavigationItem["status"] {
-  if (score >= 90) {
-    return "excellent";
-  }
-
-  if (score >= 75) {
-    return "good";
-  }
-
-  if (score >= 50) {
-    return "warning";
-  }
-
+function getStatus(score: number): NavigationItem["status"] {
+  if (score >= 90) return "excellent";
+  if (score >= 75) return "good";
+  if (score >= 50) return "warning";
   return "critical";
 }
 
-function getStatusDot(
-  status: NavigationItem["status"]
-): string {
-  if (status === "excellent") {
-    return "bg-green-500";
-  }
-
-  if (status === "good") {
-    return "bg-blue-500";
-  }
-
-  if (status === "warning") {
-    return "bg-amber-500";
-  }
-
+function getStatusDot(status: NavigationItem["status"]): string {
+  if (status === "excellent") return "bg-green-500";
+  if (status === "good") return "bg-blue-500";
+  if (status === "warning") return "bg-amber-500";
   return "bg-red-500";
 }
 
-export default function AnalysisReport({
-  data,
-}: Props) {
+export default function AnalysisReport({ data }: Props) {
   const socialScore = [
     data.ogTitle,
     data.ogDescription,
@@ -78,16 +51,12 @@ export default function AnalysisReport({
     data.twitterImage,
   ].filter(Boolean).length;
 
-  const calculatedSocialScore = Math.round(
-    (socialScore / 6) * 100
-  );
+  const calculatedSocialScore = Math.round((socialScore / 6) * 100);
 
   const imageScore =
     data.totalImages === 0
       ? 100
-      : Math.round(
-          (data.imagesWithAlt / data.totalImages) * 100
-        );
+      : Math.round((data.imagesWithAlt / data.totalImages) * 100);
 
   const validLinks =
     data.internalLinks +
@@ -98,9 +67,7 @@ export default function AnalysisReport({
   const linkScore =
     data.totalLinks === 0
       ? 100
-      : Math.round(
-          (validLinks / data.totalLinks) * 100
-        );
+      : Math.round((validLinks / data.totalLinks) * 100);
 
   const recommendationsScore =
     data.recommendations.length === 0
@@ -171,11 +138,62 @@ export default function AnalysisReport({
     },
   ];
 
+  function navigateToSection(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    id: string
+  ) {
+    event.preventDefault();
+
+    const target = document.getElementById(id);
+
+    if (!target) {
+      return;
+    }
+
+    const headerOffset = 120;
+    const targetPosition =
+      target.getBoundingClientRect().top +
+      window.scrollY -
+      headerOffset;
+
+    window.history.pushState(null, "", `#${id}`);
+
+    window.scrollTo({
+      top: Math.max(0, targetPosition),
+      behavior: "smooth",
+    });
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+
+    if (!hash) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      const target = document.getElementById(hash);
+
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 300);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <section className="mt-10 space-y-8">
       <Dashboard data={data} />
 
-      {/* Report Navigation */}
       <nav className="sticky top-4 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur">
         <div className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
           Report Navigation
@@ -186,6 +204,7 @@ export default function AnalysisReport({
             <a
               key={item.id}
               href={`#${item.id}`}
+              onClick={(event) => navigateToSection(event, item.id)}
               className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
             >
               <span
@@ -222,73 +241,43 @@ export default function AnalysisReport({
         </div>
       </nav>
 
-      <div
-        id="ai-consultant"
-        className="scroll-mt-28"
-      >
+      <div id="ai-consultant" className="scroll-mt-28">
         <AIConsultantSection data={data} />
       </div>
 
-      <div
-        id="basic-seo"
-        className="scroll-mt-28"
-      >
+      <div id="basic-seo" className="scroll-mt-28">
         <BasicSeoSection data={data} />
       </div>
 
-      <div
-        id="technical-seo"
-        className="scroll-mt-28"
-      >
+      <div id="technical-seo" className="scroll-mt-28">
         <TechnicalSeoSection data={data} />
       </div>
 
-      <div
-        id="social"
-        className="scroll-mt-28"
-      >
+      <div id="social" className="scroll-mt-28">
         <SocialSection data={data} />
       </div>
 
-      <div
-        id="security"
-        className="scroll-mt-28"
-      >
+      <div id="security" className="scroll-mt-28">
         <SecuritySection https={data.https} />
       </div>
 
-      <div
-        id="images"
-        className="scroll-mt-28"
-      >
+      <div id="images" className="scroll-mt-28">
         <ImageSection data={data} />
       </div>
 
-      <div
-        id="links"
-        className="scroll-mt-28"
-      >
+      <div id="links" className="scroll-mt-28">
         <LinkSection data={data} />
       </div>
 
-      <div
-        id="accessibility"
-        className="scroll-mt-28"
-      >
+      <div id="accessibility" className="scroll-mt-28">
         <AccessibilitySection data={data} />
       </div>
 
-      <div
-        id="performance"
-        className="scroll-mt-28"
-      >
+      <div id="performance" className="scroll-mt-28">
         <PerformanceSection data={data} />
       </div>
 
-      <div
-        id="recommendations"
-        className="scroll-mt-28"
-      >
+      <div id="recommendations" className="scroll-mt-28">
         <RecommendationsSection data={data} />
       </div>
     </section>
