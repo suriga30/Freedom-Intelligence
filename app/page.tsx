@@ -12,7 +12,8 @@ import { AnalysisResult } from "@/types/analysis";
 export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [analysis, setAnalysis] =
+    useState<AnalysisResult | null>(null);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
@@ -40,7 +41,6 @@ export default function Home() {
 
       const data = await response.json();
 
-      // ===== DEBUG =====
       console.log("=================================");
       console.log("Freedom Intelligence API Response");
       console.log(data);
@@ -61,40 +61,44 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-100 p-8">
-      <div className="mx-auto max-w-3xl">
+    <main className="min-h-screen bg-neutral-100">
+      {/* Hero Section */}
+      <section className="px-6 py-10">
+        <div className="mx-auto max-w-3xl">
+          <div className="rounded-2xl bg-white p-10 shadow-lg">
+            <Hero />
 
-        <div className="rounded-2xl bg-white p-10 shadow-lg">
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-5"
+            >
+              <UrlInput
+                value={url}
+                onChange={setUrl}
+              />
 
-          <Hero />
+              <AnalyzeButton
+                disabled={loading}
+              />
+            </form>
 
-          <form
-            onSubmit={handleSubmit}
-            className="mt-8 space-y-5"
-          >
-            <UrlInput
-              value={url}
-              onChange={setUrl}
-            />
-
-            <AnalyzeButton
-              disabled={loading}
-            />
-          </form>
-
-          {loading && (
-            <div className="mt-8 text-center text-neutral-500">
-              Analyzing website...
-            </div>
-          )}
-
+            {loading && (
+              <div className="mt-8 text-center text-neutral-500">
+                Analyzing website...
+              </div>
+            )}
+          </div>
         </div>
+      </section>
 
-        {analysis && (
-          <AnalysisReport data={analysis} />
-        )}
-
-      </div>
+      {/* Report Section */}
+      {analysis && (
+        <section className="px-6 pb-12">
+          <div className="mx-auto max-w-7xl">
+            <AnalysisReport data={analysis} />
+          </div>
+        </section>
+      )}
     </main>
   );
 }
