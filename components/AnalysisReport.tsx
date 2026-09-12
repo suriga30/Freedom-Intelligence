@@ -1,18 +1,12 @@
-
 "use client";
 
 import { useEffect } from "react";
 import type { MouseEvent } from "react";
-
-import {
-  Download,
-  FileText,
-} from "lucide-react";
+import { Download, FileText } from "lucide-react";
 
 import { AnalysisResult } from "@/types/analysis";
 
 import Dashboard from "./dashboard/Dashboard";
-
 import AIConsultantSection from "./report/AIConsultantSection";
 import BasicSeoSection from "./report/BasicSeoSection";
 import TechnicalSeoSection from "./report/TechnicalSeoSection";
@@ -198,13 +192,11 @@ export default function AnalysisReport({ data }: Props) {
   }, []);
 
   return (
-    <section className="mt-10 space-y-8">
+    <section className="mt-10 space-y-8 bg-white text-slate-900 print:mt-0 print:space-y-6">
+      {/* Screen-only toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
         <div className="flex items-center gap-3">
-          <FileText
-            size={22}
-            className="text-slate-700"
-          />
+          <FileText size={22} className="text-slate-700" />
 
           <div>
             <h2 className="text-xl font-bold text-slate-900">
@@ -227,8 +219,45 @@ export default function AnalysisReport({ data }: Props) {
         </button>
       </div>
 
-      <Dashboard data={data} />
+      {/* Print-only report header */}
+      <header className="hidden border-b-2 border-slate-900 pb-5 print:block">
+        <div className="flex items-start justify-between gap-6">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-500">
+              Freedom Intelligence
+            </p>
 
+            <h1 className="mt-2 text-3xl font-bold text-slate-950">
+              Website Intelligence Report
+            </h1>
+
+            <p className="mt-2 text-sm text-slate-600">
+              Comprehensive website health, SEO, security, accessibility,
+              performance, and optimization analysis.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-slate-300 px-4 py-3 text-right">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Website IQ
+            </p>
+
+            <p className="mt-1 text-4xl font-bold text-slate-950">
+              {data.websiteIQ}
+              <span className="text-base font-medium text-slate-500">
+                /100
+              </span>
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main dashboard */}
+      <div className="print:break-inside-avoid">
+        <Dashboard data={data} />
+      </div>
+
+      {/* Screen-only navigation */}
       <nav className="sticky top-4 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur print:hidden">
         <div className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
           Report Navigation
@@ -276,45 +305,66 @@ export default function AnalysisReport({ data }: Props) {
         </div>
       </nav>
 
-      <div id="ai-consultant" className="scroll-mt-28">
+      {/* Report sections */}
+      <div
+        id="ai-consultant"
+        className="scroll-mt-28 print:break-inside-avoid"
+      >
         <AIConsultantSection data={data} />
       </div>
 
-      <div id="basic-seo" className="scroll-mt-28">
+      <div id="basic-seo" className="scroll-mt-28 print:break-inside-avoid">
         <BasicSeoSection data={data} />
       </div>
 
-      <div id="technical-seo" className="scroll-mt-28">
+      <div
+        id="technical-seo"
+        className="scroll-mt-28 print:break-inside-avoid"
+      >
         <TechnicalSeoSection data={data} />
       </div>
 
-      <div id="social" className="scroll-mt-28">
+      <div id="social" className="scroll-mt-28 print:break-inside-avoid">
         <SocialSection data={data} />
       </div>
 
-      <div id="security" className="scroll-mt-28">
+      <div id="security" className="scroll-mt-28 print:break-inside-avoid">
         <SecuritySection https={data.https} />
       </div>
 
-      <div id="images" className="scroll-mt-28">
+      <div id="images" className="scroll-mt-28 print:break-inside-avoid">
         <ImageSection data={data} />
       </div>
 
-      <div id="links" className="scroll-mt-28">
+      <div id="links" className="scroll-mt-28 print:break-inside-avoid">
         <LinkSection data={data} />
       </div>
 
-      <div id="accessibility" className="scroll-mt-28">
+      <div
+        id="accessibility"
+        className="scroll-mt-28 print:break-inside-avoid"
+      >
         <AccessibilitySection data={data} />
       </div>
 
-      <div id="performance" className="scroll-mt-28">
+      <div
+        id="performance"
+        className="scroll-mt-28 print:break-inside-avoid"
+      >
         <PerformanceSection data={data} />
       </div>
 
-      <div id="recommendations" className="scroll-mt-28">
+      <div
+        id="recommendations"
+        className="scroll-mt-28 print:break-inside-avoid"
+      >
         <RecommendationsSection data={data} />
       </div>
+
+      {/* Print-only footer */}
+      <footer className="hidden border-t border-slate-300 pt-4 text-center text-xs text-slate-500 print:block">
+        Generated by Freedom Intelligence — Website Intelligence Platform
+      </footer>
     </section>
   );
 }
