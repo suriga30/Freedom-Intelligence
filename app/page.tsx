@@ -67,6 +67,17 @@ export default function Home() {
   function selectPreviousScan(website: string) {
     setUrl(website);
     setAnalysis(null);
+
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search
+    );
+
+    window.scrollTo({
+      top: 0,
+      behavior: "auto",
+    });
   }
 
   function clearScanHistory() {
@@ -89,6 +100,12 @@ export default function Home() {
 
     setLoading(true);
     setAnalysis(null);
+
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search
+    );
 
     try {
       const response = await fetch("/api/analyze", {
@@ -115,6 +132,13 @@ export default function Home() {
 
       setAnalysis(data);
       saveToScanHistory(url.trim());
+
+      window.setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 100);
     } catch (error) {
       console.error("Request Failed:", error);
       alert("Unable to connect to the scanner.");
@@ -149,6 +173,7 @@ export default function Home() {
                     <h3 className="text-sm font-bold text-neutral-800">
                       Recent Scans
                     </h3>
+
                     <p className="mt-1 text-xs text-neutral-500">
                       Quickly revisit your recently analyzed websites.
                     </p>
