@@ -12,12 +12,9 @@ import { AnalysisResult } from "@/types/analysis";
 export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] =
-    useState<AnalysisResult | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!url.trim()) {
@@ -61,25 +58,17 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-100">
+    <main className="min-h-screen bg-neutral-100 print:bg-white">
       {/* Hero Section */}
-      <section className="px-6 py-10">
+      <section className="px-6 py-10 print:hidden">
         <div className="mx-auto max-w-3xl">
           <div className="rounded-2xl bg-white p-10 shadow-lg">
             <Hero />
 
-            <form
-              onSubmit={handleSubmit}
-              className="mt-8 space-y-5"
-            >
-              <UrlInput
-                value={url}
-                onChange={setUrl}
-              />
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <UrlInput value={url} onChange={setUrl} />
 
-              <AnalyzeButton
-                disabled={loading}
-              />
+              <AnalyzeButton disabled={loading} />
             </form>
 
             {loading && (
@@ -93,8 +82,8 @@ export default function Home() {
 
       {/* Report Section */}
       {analysis && (
-        <section className="px-6 pb-12">
-          <div className="mx-auto max-w-7xl">
+        <section className="px-6 pb-12 print:px-0 print:pb-0">
+          <div className="mx-auto max-w-7xl print:max-w-none">
             <AnalysisReport data={analysis} />
           </div>
         </section>

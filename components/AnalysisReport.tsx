@@ -253,7 +253,7 @@ export default function AnalysisReport({ data }: Props) {
       </header>
 
       {/* Main dashboard */}
-      <div className="print:break-inside-avoid">
+      <div>
         <Dashboard data={data} />
       </div>
 
@@ -306,58 +306,43 @@ export default function AnalysisReport({ data }: Props) {
       </nav>
 
       {/* Report sections */}
-      <div
-        id="ai-consultant"
-        className="scroll-mt-28 print:break-inside-avoid"
-      >
+      <div id="ai-consultant" className="scroll-mt-28">
         <AIConsultantSection data={data} />
       </div>
 
-      <div id="basic-seo" className="scroll-mt-28 print:break-inside-avoid">
+      <div id="basic-seo" className="scroll-mt-28">
         <BasicSeoSection data={data} />
       </div>
 
-      <div
-        id="technical-seo"
-        className="scroll-mt-28 print:break-inside-avoid"
-      >
+      <div id="technical-seo" className="scroll-mt-28">
         <TechnicalSeoSection data={data} />
       </div>
 
-      <div id="social" className="scroll-mt-28 print:break-inside-avoid">
+      <div id="social" className="scroll-mt-28">
         <SocialSection data={data} />
       </div>
 
-      <div id="security" className="scroll-mt-28 print:break-inside-avoid">
+      <div id="security" className="scroll-mt-28">
         <SecuritySection https={data.https} />
       </div>
 
-      <div id="images" className="scroll-mt-28 print:break-inside-avoid">
+      <div id="images" className="scroll-mt-28">
         <ImageSection data={data} />
       </div>
 
-      <div id="links" className="scroll-mt-28 print:break-inside-avoid">
+      <div id="links" className="scroll-mt-28">
         <LinkSection data={data} />
       </div>
 
-      <div
-        id="accessibility"
-        className="scroll-mt-28 print:break-inside-avoid"
-      >
+      <div id="accessibility" className="scroll-mt-28">
         <AccessibilitySection data={data} />
       </div>
 
-      <div
-        id="performance"
-        className="scroll-mt-28 print:break-inside-avoid"
-      >
+      <div id="performance" className="scroll-mt-28">
         <PerformanceSection data={data} />
       </div>
 
-      <div
-        id="recommendations"
-        className="scroll-mt-28 print:break-inside-avoid"
-      >
+      <div id="recommendations" className="scroll-mt-28">
         <RecommendationsSection data={data} />
       </div>
 
