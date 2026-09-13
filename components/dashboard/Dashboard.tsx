@@ -12,9 +12,7 @@ type Props = {
   data: AnalysisResult;
 };
 
-export default function Dashboard({
-  data,
-}: Props) {
+export default function Dashboard({ data }: Props) {
   const performance = data.performanceScore;
   const security = data.https ? 100 : 0;
 
@@ -45,7 +43,10 @@ export default function Dashboard({
 
   return (
     <div className="mb-12 space-y-8">
-      <DashboardHeader website={data.website} />
+      {/* Hidden in PDF to avoid duplicating the main report header */}
+      <div className="print:hidden">
+        <DashboardHeader website={data.website} />
+      </div>
 
       <div className="grid gap-8 xl:grid-cols-2">
         <WebsiteIQCard
