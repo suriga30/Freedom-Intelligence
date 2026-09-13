@@ -194,9 +194,12 @@ export default function AnalysisReport({ data }: Props) {
   return (
     <section className="mt-10 space-y-8 bg-white text-slate-900 print:mt-0 print:space-y-6">
       {/* Screen-only toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
-        <div className="flex items-center gap-3">
-          <FileText size={22} className="text-slate-700" />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
+        <div className="flex items-start gap-3">
+          <FileText
+            size={22}
+            className="mt-1 shrink-0 text-slate-700"
+          />
 
           <div>
             <h2 className="text-xl font-bold text-slate-900">
@@ -212,7 +215,7 @@ export default function AnalysisReport({ data }: Props) {
         <button
           type="button"
           onClick={exportPdfReport}
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
         >
           <Download size={18} />
           Export PDF Report
@@ -259,30 +262,32 @@ export default function AnalysisReport({ data }: Props) {
 
       {/* Screen-only navigation */}
       <nav className="sticky top-4 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur print:hidden">
-        <div className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+        <div className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.2em] text-slate-400 sm:px-2">
           Report Navigation
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {navigationItems.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
               onClick={(event) => navigateToSection(event, item.id)}
-              className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+              className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 text-center text-xs font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 sm:justify-start sm:px-3 sm:py-2 sm:text-sm"
             >
               <span
-                className={`h-2.5 w-2.5 rounded-full ${getStatusDot(
+                className={`h-2.5 w-2.5 shrink-0 rounded-full ${getStatusDot(
                   item.status
                 )}`}
               />
 
-              <span>{item.label}</span>
+              <span className="min-w-0 break-words">
+                {item.label}
+              </span>
             </a>
           ))}
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-100 px-2 pt-3 text-xs text-slate-500">
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-100 px-1 pt-3 text-xs text-slate-500 sm:px-2">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-green-500" />
             Excellent
