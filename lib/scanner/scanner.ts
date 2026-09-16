@@ -1,22 +1,39 @@
 import { extractBasicSeo } from "./basicSeo";
+
 import { calculateSeoScore } from "./score";
+
 import { calculateHealth } from "./health";
+
 import { scanRobots } from "./robots";
+
 import { scanSitemap } from "./sitemap";
+
 import { extractOpenGraph } from "./openGraph";
+
 import { extractTwitterCards } from "./twitterCards";
+
 import { scanSecurity } from "./security";
+
 import { extractImages } from "./images";
+
 import { extractLinks } from "./links";
+
 import { scanPerformance } from "./performance";
+
 import { generateRecommendations } from "./recommendations";
+
 import { scanAccessibility } from "./accessibility";
+
 import { calculateTechnicalScore } from "./technical";
+
 import { calculateWebsiteIQ } from "./websiteIQ";
+
 import { generateAIConsultant } from "./aiConsultant";
 
 export async function scanWebsite(url: string) {
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(10000),
+  });
 
   if (!response.ok) {
     throw new Error("Unable to fetch website.");
@@ -137,26 +154,21 @@ export async function scanWebsite(url: string) {
     accessibilityScore: accessibility.accessibilityScore,
     performanceScore: performance.performanceScore,
     technicalScore,
-
     imagesWithoutAlt: images.imagesWithoutAlt,
     robotsFound: robots.robotsFound,
     sitemapFound: sitemap.sitemapFound,
     https: security.https,
-
     title: seo.title,
     description: seo.description,
     h1: seo.h1,
     canonical: seo.canonical,
-
     hasLang: accessibility.hasLang,
     hasViewport: accessibility.hasViewport,
     formsWithoutLabels: accessibility.formsWithoutLabels,
     headingStructure: accessibility.headingStructure,
-
     ogTitle: openGraph.ogTitle,
     ogDescription: openGraph.ogDescription,
     ogImage: openGraph.ogImage,
-
     twitterTitle: twitter.twitterTitle,
     twitterDescription: twitter.twitterDescription,
     twitterImage: twitter.twitterImage,
@@ -185,28 +197,23 @@ export async function scanWebsite(url: string) {
     website: url,
 
     // Basic SEO
-
     title: seo.title,
     description: seo.description,
     h1: seo.h1,
     canonical: seo.canonical,
 
     // SEO
-
     score: scoreResult.score,
     rating: scoreResult.rating,
 
     // Website IQ
-
     websiteIQ: websiteIQ.score,
     websiteIQRating: websiteIQ.rating,
 
     // Technical
-
     technicalScore,
 
     // Website Health
-
     overallHealth: health.overallHealth,
     healthGrade: health.grade,
     healthStatus: health.status,
@@ -215,39 +222,32 @@ export async function scanWebsite(url: string) {
     passedChecks: health.passedChecks,
 
     // Robots
-
     robotsUrl: robots.robotsUrl,
     robotsFound: robots.robotsFound,
 
     // Sitemap
-
     sitemapUrl: sitemap.sitemapUrl,
     sitemapFound: sitemap.sitemapFound,
 
     // Open Graph
-
     ogTitle: openGraph.ogTitle,
     ogDescription: openGraph.ogDescription,
     ogImage: openGraph.ogImage,
 
     // Twitter
-
     twitterTitle: twitter.twitterTitle,
     twitterDescription: twitter.twitterDescription,
     twitterImage: twitter.twitterImage,
 
     // Security
-
     https: security.https,
 
     // Images
-
     totalImages: images.totalImages,
     imagesWithAlt: images.imagesWithAlt,
     imagesWithoutAlt: images.imagesWithoutAlt,
 
     // Links
-
     totalLinks: links.totalLinks,
     internalLinks: links.internalLinks,
     externalLinks: links.externalLinks,
@@ -255,13 +255,11 @@ export async function scanWebsite(url: string) {
     telephoneLinks: links.telephoneLinks,
 
     // Performance
-
     responseTime: performance.responseTime,
     performanceRating: performance.performanceRating,
     performanceScore: performance.performanceScore,
 
     // Accessibility
-
     hasLang: accessibility.hasLang,
     hasViewport: accessibility.hasViewport,
     ariaLabels: accessibility.ariaLabels,
@@ -270,11 +268,9 @@ export async function scanWebsite(url: string) {
     accessibilityScore: accessibility.accessibilityScore,
 
     // Recommendations
-
     recommendations,
 
     // AI Consultant
-
     aiConsultant,
   };
 }
