@@ -9,7 +9,8 @@ export default function UrlInput({
 }: UrlInputProps) {
   return (
     <input
-      type="url"
+      type="text"
+      inputMode="url"
       placeholder="https://example.com"
       value={value}
       onChange={(e) => onChange(e.target.value)}

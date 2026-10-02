@@ -2,7 +2,8 @@ export interface TechnicalScoreInput {
   robotsFound: boolean;
   sitemapFound: boolean;
   canonical: string;
-  imagesWithoutAlt: number;
+  totalImages: number;
+  imagesWithAlt: number;
 }
 
 export function calculateTechnicalScore(
@@ -13,7 +14,6 @@ export function calculateTechnicalScore(
   // =========================
   // Robots.txt — 25 points
   // =========================
-
   if (data.robotsFound) {
     score += 25;
   }
@@ -21,7 +21,6 @@ export function calculateTechnicalScore(
   // =========================
   // Sitemap.xml — 25 points
   // =========================
-
   if (data.sitemapFound) {
     score += 25;
   }
@@ -29,28 +28,25 @@ export function calculateTechnicalScore(
   // =========================
   // Canonical URL — 30 points
   // =========================
-
   if (data.canonical) {
     score += 30;
   }
 
   // =========================
-  // Image ALT hygiene — 20 points
+  // Image ALT coverage — 20 points
   // =========================
+  let imageAltScore = 20;
 
-  if (data.imagesWithoutAlt === 0) {
-    score += 20;
-  } else {
-    const imagePenalty = Math.min(
-      20,
-      data.imagesWithoutAlt * 2
-    );
+  if (data.totalImages > 0) {
+    const altCoverage =
+      data.imagesWithAlt / data.totalImages;
 
-    score += Math.max(
-      0,
-      20 - imagePenalty
+    imageAltScore = Math.round(
+      altCoverage * 20
     );
   }
+
+  score += imageAltScore;
 
   return Math.max(
     0,

@@ -12,20 +12,51 @@ import { AnalysisResult } from "@/types/analysis";
 type ScanHistoryItem = {
   website: string;
   scannedAt: string;
+  analysis: AnalysisResult;
 };
 
 const HISTORY_KEY = "freedom-intelligence-scan-history";
 const MAX_HISTORY_ITEMS = 5;
 
+function normalizeUrl(value: string): string {
+  let normalized = value.trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  if (!/^https?:\/\//i.test(normalized)) {
+    normalized = `https://${normalized}`;
+  }
+
+  try {
+    const parsedUrl = new URL(normalized);
+
+    parsedUrl.protocol = parsedUrl.protocol.toLowerCase();
+    parsedUrl.hostname = parsedUrl.hostname.toLowerCase();
+
+    if (parsedUrl.pathname === "/") {
+      parsedUrl.pathname = "";
+    }
+
+    return parsedUrl.toString().replace(/\/$/, "");
+  } catch {
+    return normalized;
+  }
+}
+
 export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [scanHistory, setScanHistory] = useState<ScanHistoryItem[]>([]);
+  const [analysis, setAnalysis] =
+    useState<AnalysisResult | null>(null);
+  const [scanHistory, setScanHistory] =
+    useState<ScanHistoryItem[]>([]);
 
   useEffect(() => {
     try {
-      const savedHistory = window.localStorage.getItem(HISTORY_KEY);
+      const savedHistory =
+        window.localStorage.getItem(HISTORY_KEY);
 
       if (savedHistory) {
         const parsedHistory = JSON.parse(savedHistory);
@@ -35,20 +66,31 @@ export default function Home() {
         }
       }
     } catch (error) {
-      console.error("Unable to load scan history:", error);
+      console.error(
+        "Unable to load scan history:",
+        error
+      );
     }
   }, []);
 
-  function saveToScanHistory(website: string) {
+  function saveToScanHistory(
+    website: string,
+    analysisResult: AnalysisResult
+  ) {
+    const normalizedWebsite = normalizeUrl(website);
+
     const newItem: ScanHistoryItem = {
-      website,
+      website: normalizedWebsite,
       scannedAt: new Date().toISOString(),
+      analysis: analysisResult,
     };
 
     const updatedHistory = [
       newItem,
       ...scanHistory.filter(
-        (item) => item.website.toLowerCase() !== website.toLowerCase()
+        (item) =>
+          normalizeUrl(item.website).toLowerCase() !==
+          normalizedWebsite.toLowerCase()
       ),
     ].slice(0, MAX_HISTORY_ITEMS);
 
@@ -60,24 +102,32 @@ export default function Home() {
         JSON.stringify(updatedHistory)
       );
     } catch (error) {
-      console.error("Unable to save scan history:", error);
+      console.error(
+        "Unable to save scan history:",
+        error
+      );
     }
   }
 
-  function selectPreviousScan(website: string) {
-    setUrl(website);
-    setAnalysis(null);
+  function selectPreviousScan(
+    item: ScanHistoryItem
+  ) {
+    setUrl(item.website);
+    setAnalysis(item.analysis);
 
     window.history.replaceState(
       null,
       "",
-      window.location.pathname + window.location.search
+      window.location.pathname +
+        window.location.search
     );
 
-    window.scrollTo({
-      top: 0,
-      behavior: "auto",
-    });
+    window.setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 100);
   }
 
   function clearScanHistory() {
@@ -86,15 +136,29 @@ export default function Home() {
     try {
       window.localStorage.removeItem(HISTORY_KEY);
     } catch (error) {
-      console.error("Unable to clear scan history:", error);
+      console.error(
+        "Unable to clear scan history:",
+        error
+      );
     }
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
 
     if (!url.trim()) {
       alert("Please enter a website URL.");
+      return;
+    }
+
+    const normalizedUrl = normalizeUrl(url);
+
+    try {
+      new URL(normalizedUrl);
+    } catch {
+      alert("Please enter a valid website URL.");
       return;
     }
 
@@ -104,34 +168,55 @@ export default function Home() {
     window.history.replaceState(
       null,
       "",
-      window.location.pathname + window.location.search
+      window.location.pathname +
+        window.location.search
     );
 
     try {
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          website: url,
-        }),
-      });
+      const response = await fetch(
+        "/api/analyze",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            website: normalizedUrl,
+          }),
+        }
+      );
 
       const data = await response.json();
 
-      console.log("=================================");
-      console.log("Freedom Intelligence API Response");
+      console.log(
+        "================================="
+      );
+
+      console.log(
+        "Freedom Intelligence API Response"
+      );
+
       console.log(data);
-      console.log("=================================");
+
+      console.log(
+        "================================="
+      );
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Analysis failed.");
+        alert(
+          data.message ||
+            "Analysis failed."
+        );
         return;
       }
 
+      setUrl(normalizedUrl);
       setAnalysis(data);
-      saveToScanHistory(url.trim());
+
+      saveToScanHistory(
+        normalizedUrl,
+        data
+      );
 
       window.setTimeout(() => {
         window.scrollTo({
@@ -140,8 +225,14 @@ export default function Home() {
         });
       }, 100);
     } catch (error) {
-      console.error("Request Failed:", error);
-      alert("Unable to connect to the scanner.");
+      console.error(
+        "Request Failed:",
+        error
+      );
+
+      alert(
+        "Unable to connect to the scanner."
+      );
     } finally {
       setLoading(false);
     }
@@ -150,14 +241,24 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-neutral-100 print:bg-white">
       {/* Hero Section */}
+
       <section className="px-6 py-10 print:hidden">
         <div className="mx-auto max-w-3xl">
           <div className="rounded-2xl bg-white p-10 shadow-lg">
             <Hero />
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-              <UrlInput value={url} onChange={setUrl} />
-              <AnalyzeButton disabled={loading} />
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-5"
+            >
+              <UrlInput
+                value={url}
+                onChange={setUrl}
+              />
+
+              <AnalyzeButton
+                disabled={loading}
+              />
             </form>
 
             {loading && (
@@ -166,57 +267,73 @@ export default function Home() {
               </div>
             )}
 
-            {scanHistory.length > 0 && !loading && (
-              <div className="mt-10 border-t border-neutral-200 pt-6">
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-sm font-bold text-neutral-800">
-                      Recent Scans
-                    </h3>
+            {scanHistory.length > 0 &&
+              !loading && (
+                <div className="mt-10 border-t border-neutral-200 pt-6">
+                  <div className="mb-4 flex items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-sm font-bold text-neutral-800">
+                        Recent Scans
+                      </h3>
 
-                    <p className="mt-1 text-xs text-neutral-500">
-                      Quickly revisit your recently analyzed websites.
-                    </p>
+                      <p className="mt-1 text-xs text-neutral-500">
+                        Quickly reopen your
+                        recently analyzed
+                        websites.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={
+                        clearScanHistory
+                      }
+                      className="text-xs font-medium text-red-500 transition hover:text-red-700"
+                    >
+                      Clear history
+                    </button>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={clearScanHistory}
-                    className="text-xs font-medium text-red-500 transition hover:text-red-700"
-                  >
-                    Clear history
-                  </button>
-                </div>
+                  <div className="space-y-2">
+                    {scanHistory.map(
+                      (item) => (
+                        <button
+                          key={`${item.website}-${item.scannedAt}`}
+                          type="button"
+                          onClick={() =>
+                            selectPreviousScan(
+                              item
+                            )
+                          }
+                          className="flex w-full items-center justify-between gap-4 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50"
+                        >
+                          <span className="min-w-0 truncate text-sm font-medium text-neutral-700">
+                            {item.website}
+                          </span>
 
-                <div className="space-y-2">
-                  {scanHistory.map((item) => (
-                    <button
-                      key={`${item.website}-${item.scannedAt}`}
-                      type="button"
-                      onClick={() => selectPreviousScan(item.website)}
-                      className="flex w-full items-center justify-between gap-4 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50"
-                    >
-                      <span className="min-w-0 truncate text-sm font-medium text-neutral-700">
-                        {item.website}
-                      </span>
-
-                      <span className="shrink-0 text-xs text-neutral-400">
-                        {new Date(item.scannedAt).toLocaleDateString()}
-                      </span>
-                    </button>
-                  ))}
+                          <span className="shrink-0 text-xs text-neutral-400">
+                            {new Date(
+                              item.scannedAt
+                            ).toLocaleDateString()}
+                          </span>
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
       </section>
 
       {/* Report Section */}
+
       {analysis && (
         <section className="px-6 pb-12 print:px-0 print:pb-0">
           <div className="mx-auto max-w-7xl print:max-w-none">
-            <AnalysisReport data={analysis} />
+            <AnalysisReport
+              data={analysis}
+            />
           </div>
         </section>
       )}

@@ -43,23 +43,15 @@ export function generateAIConsultant(data: {
   }
 
   if (data.seoScore >= 90) {
-    strengths.push(
-      "The website has a strong basic SEO foundation."
-    );
+    strengths.push("The website has a strong basic SEO foundation.");
   } else if (data.seoScore >= 75) {
-    strengths.push(
-      "The website has a good basic SEO foundation."
-    );
+    strengths.push("The website has a good basic SEO foundation.");
   }
 
   if (data.technicalScore >= 90) {
-    strengths.push(
-      "Technical website health is excellent."
-    );
+    strengths.push("Technical website health is excellent.");
   } else if (data.technicalScore >= 75) {
-    strengths.push(
-      "Technical website health is generally strong."
-    );
+    strengths.push("Technical website health is generally strong.");
   }
 
   // =========================
@@ -96,7 +88,7 @@ export function generateAIConsultant(data: {
     );
   }
 
-  // Add recommendation priorities
+  // Add high-priority recommendations
   for (const recommendation of data.recommendations) {
     if (
       recommendation.priority === "High" &&

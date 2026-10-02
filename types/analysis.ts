@@ -19,7 +19,6 @@ export interface AnalysisResult {
   description: string;
   h1: string;
   canonical: string;
-
   score: number;
   rating: string;
 

@@ -1,36 +1,25 @@
+import { AnalysisResult } from "@/types/analysis";
+
 import { extractBasicSeo } from "./basicSeo";
-
 import { calculateSeoScore } from "./score";
-
 import { calculateHealth } from "./health";
-
 import { scanRobots } from "./robots";
-
 import { scanSitemap } from "./sitemap";
-
 import { extractOpenGraph } from "./openGraph";
-
 import { extractTwitterCards } from "./twitterCards";
-
 import { scanSecurity } from "./security";
-
 import { extractImages } from "./images";
-
 import { extractLinks } from "./links";
-
 import { scanPerformance } from "./performance";
-
 import { generateRecommendations } from "./recommendations";
-
 import { scanAccessibility } from "./accessibility";
-
 import { calculateTechnicalScore } from "./technical";
-
 import { calculateWebsiteIQ } from "./websiteIQ";
-
 import { generateAIConsultant } from "./aiConsultant";
 
-export async function scanWebsite(url: string) {
+export async function scanWebsite(
+  url: string
+): Promise<AnalysisResult> {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(10000),
   });
@@ -115,7 +104,8 @@ export async function scanWebsite(url: string) {
     robotsFound: robots.robotsFound,
     sitemapFound: sitemap.sitemapFound,
     canonical: seo.canonical,
-    imagesWithoutAlt: images.imagesWithoutAlt,
+    totalImages: images.totalImages,
+    imagesWithAlt: images.imagesWithAlt,
   });
 
   // =========================
@@ -164,13 +154,16 @@ export async function scanWebsite(url: string) {
     canonical: seo.canonical,
     hasLang: accessibility.hasLang,
     hasViewport: accessibility.hasViewport,
-    formsWithoutLabels: accessibility.formsWithoutLabels,
-    headingStructure: accessibility.headingStructure,
+    formsWithoutLabels:
+      accessibility.formsWithoutLabels,
+    headingStructure:
+      accessibility.headingStructure,
     ogTitle: openGraph.ogTitle,
     ogDescription: openGraph.ogDescription,
     ogImage: openGraph.ogImage,
     twitterTitle: twitter.twitterTitle,
-    twitterDescription: twitter.twitterDescription,
+    twitterDescription:
+      twitter.twitterDescription,
     twitterImage: twitter.twitterImage,
   });
 
@@ -181,8 +174,10 @@ export async function scanWebsite(url: string) {
   const aiConsultant = generateAIConsultant({
     websiteIQ: websiteIQ.score,
     seoScore: scoreResult.score,
-    accessibilityScore: accessibility.accessibilityScore,
-    performanceScore: performance.performanceScore,
+    accessibilityScore:
+      accessibility.accessibilityScore,
+    performanceScore:
+      performance.performanceScore,
     technicalScore,
     securityScore: security.https ? 100 : 0,
     recommendations,
@@ -236,7 +231,8 @@ export async function scanWebsite(url: string) {
 
     // Twitter
     twitterTitle: twitter.twitterTitle,
-    twitterDescription: twitter.twitterDescription,
+    twitterDescription:
+      twitter.twitterDescription,
     twitterImage: twitter.twitterImage,
 
     // Security
@@ -256,16 +252,21 @@ export async function scanWebsite(url: string) {
 
     // Performance
     responseTime: performance.responseTime,
-    performanceRating: performance.performanceRating,
-    performanceScore: performance.performanceScore,
+    performanceRating:
+      performance.performanceRating,
+    performanceScore:
+      performance.performanceScore,
 
     // Accessibility
     hasLang: accessibility.hasLang,
     hasViewport: accessibility.hasViewport,
     ariaLabels: accessibility.ariaLabels,
-    formsWithoutLabels: accessibility.formsWithoutLabels,
-    headingStructure: accessibility.headingStructure,
-    accessibilityScore: accessibility.accessibilityScore,
+    formsWithoutLabels:
+      accessibility.formsWithoutLabels,
+    headingStructure:
+      accessibility.headingStructure,
+    accessibilityScore:
+      accessibility.accessibilityScore,
 
     // Recommendations
     recommendations,
