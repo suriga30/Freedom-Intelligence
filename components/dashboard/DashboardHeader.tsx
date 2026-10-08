@@ -25,7 +25,7 @@ export default function DashboardHeader({
         </p>
 
         <p className="max-w-3xl text-sm leading-6 text-slate-500">
-          AI-powered analysis of your website's SEO, technical health,
+          AI-powered analysis of your website&apos;s SEO, technical health,
           accessibility, security, performance, and overall quality to help
           you identify issues and prioritize improvements.
         </p>

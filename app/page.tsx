@@ -54,6 +54,8 @@ export default function Home() {
     useState<ScanHistoryItem[]>([]);
 
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     try {
       const savedHistory =
         window.localStorage.getItem(HISTORY_KEY);
@@ -62,7 +64,9 @@ export default function Home() {
         const parsedHistory = JSON.parse(savedHistory);
 
         if (Array.isArray(parsedHistory)) {
-          setScanHistory(parsedHistory);
+          timeoutId = setTimeout(() => {
+            setScanHistory(parsedHistory);
+          }, 0);
         }
       }
     } catch (error) {
@@ -71,6 +75,12 @@ export default function Home() {
         error
       );
     }
+
+    return () => {
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   function saveToScanHistory(
