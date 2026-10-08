@@ -1,5 +1,4 @@
-This is a [Next.js](https# Freedom Intelligence
-
+# Freedom Intelligence
 **Freedom Intelligence** is an AI-powered Website Intelligence Platform built with Next.js and TypeScript. It analyzes websites across SEO, technical health, security, accessibility, performance, and more, then presents actionable recommendations through a clear website intelligence report.
 
 ## Features
